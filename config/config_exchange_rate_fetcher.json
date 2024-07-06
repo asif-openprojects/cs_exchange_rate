@@ -1,0 +1,13 @@
+{
+
+  "exchange_rate_api": {
+    "exchange_rate_url":""
+  }
+,
+
+  "exchange_rate_defaults":{
+    "days":30,
+    "base_currency":"AUD",
+    "target_currency":"NZD"
+  }
+}
