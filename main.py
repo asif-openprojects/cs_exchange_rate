@@ -9,23 +9,22 @@ from exchange_rate.exchange_rate_fetcher import ExchangeRateFetcher
 from exchange_rate.exchange_rate_preprocess import Preprocess
 from exchange_rate.exchange_rate_analyzer import ExchangeRateAnalyzer
 
-def initialize_variables():
+def init_variables():
     config_loader = ConfigLoader()
     env_variables = config_loader.get_env_variables()
     return env_variables
 
 def main():
-    env_variables = initialize_variables()
-
+    env_variables = init_variables()
     log_file=env_variables['LOG_FILE']
 
-    script_name = os.path.splitext(os.path.basename(__file__))[0]
-    logger=setup_logger(script_name,log_file,level=logging.INFO)
+    script_name = os.path.basename(__file__)
+    logger=setup_logger(script_name,log_file)
 
-    logger.info(f"Initiating process to retrieve exchange rates")
-
+    logger.info("Initiating process to retrieve exchange rates")
     fetcher = ExchangeRateFetcher()
-    data = fetcher.fetch_exchange_rates()
+
+    data = fetcher.get_exchange_rates()
     print(data)
 
     # Instantiate and preprocess JSON data

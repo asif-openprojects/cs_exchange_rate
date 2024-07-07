@@ -7,23 +7,34 @@ from utils.config_loader import ConfigLoader
 
 class ExchangeRateFetcher:
     def __init__(self):
-        script_name = os.path.splitext(os.path.basename(__file__))[0]
-        config = ConfigLoader(script_name)
+        config_file = "config_"+os.path.splitext(os.path.basename(__file__))[0]+".json"
+        self.config_loader = ConfigLoader(module_config_file=config_file)
 
-    def fetch_exchange_rates(self):
+        self.env_variables = self.config_loader.get_env_variables()
+        self.common_config = self.config_loader.get_common_config()
+        self.module_config = self.config_loader.get_module_config()
+    def get_exchange_rates(self):
+        # Extract variables from configurations
+        log_file = self.env_variables.get('LOG_FILE')
+        access_key = self.env_variables.get('API_KEY')
+
+        base_url = self.module_config.get("url_exchange_rate")
+        defaults_exchange_rate = self.common_config.get('defaults_exchange_rate', {})
+        days = defaults_exchange_rate.get('days')
+        base_currency = defaults_exchange_rate.get('base_currency')
+        target_currency = defaults_exchange_rate.get('target_currency')
+
+        # Calculate start and end dates
         current_datetime = datetime.now()
         start_date = (current_datetime - timedelta(days=30)).strftime('%Y-%m-%d')
         end_date = current_datetime.strftime('%Y-%m-%d')
-        base_currency = 'AUD'
-        target_currencies = 'NZD'
-        access_key='626(f956d7ceb5a76830fd90a6d8ee96a'
 
         params = {
-            "access_key":"626f956d7ceb5a76830fd90a6d8ee96a",
+            "access_key": {access_key},
             "start_date":{start_date},
             "end_date":{end_date},
             "base":{base_currency},
-            "symbols":{target_currencies}
+            "symbols":{target_currency}
         }
         try:
             base_url="https://api.exchangeratesapi.io/v1/timeseries"
